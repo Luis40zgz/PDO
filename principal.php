@@ -5,7 +5,12 @@ error_reporting(E_ALL);
 session_start();
 if(!isset($_SESSION['logged'])){
     header('location:index.php');
-    die();
+    die;
+}
+if (isset($_POST['logout'])){
+    session_destroy();
+    header('location:index.php');
+    die;
 }
 include "conection.php";
 $carga = fn($clase)=>require "$clase.php";
@@ -32,7 +37,8 @@ $menu = new menu($conection,$familia );
     <?= $menu;?>
     <?= $lista ?? "";?>
 </form>
-    <form action=""></form>
-<button type="submit" name="logout" value="logout">LOG OUT</button>
+    <form action="<?=$_SERVER['PHP_SELF'];?>" method="post">
+        <button type="submit" name="logout" value="logout">LOG OUT</button>
+    </form>
 </body>
 </html>

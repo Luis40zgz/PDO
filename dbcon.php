@@ -26,21 +26,22 @@ class dbcon extends PDO
         return $salida;
     }
     public function muestra_familias(){
-        $sentencia = "SELECT nombre, cod FROM familia";
+        $sentencia = "SELECT nombre FROM familia";
         $familias = $this->generar_consulta($sentencia);
         $salida = [];
-        while($row = $familias->fetch()){
+        while($row = $familias->fetch()) {
             $salida [] = $row['nombre'];
-            $salida [] = $row['cod'];
         }
         return $salida;
     }
     public function muestra_productos(string $familia){
         $parametros = [$familia];
-        $sentencia = "SELECT nombre_corto, PVP FROM producto WHERE familia = ?";
+        $sentencia = "SELECT cod, nombre_corto, PVP FROM producto WHERE familia = ?";
         $productos = $this->generar_consulta($sentencia, $parametros);
         $indice = 0;
+        $salida = [];
         while($row = $productos->fetch()){
+            $salida [$indice][] = $row['cod'];
             $salida [$indice][] = $row['nombre_corto'];
             $salida [$indice][] = $row['PVP'];
             $indice++;
@@ -55,5 +56,32 @@ class dbcon extends PDO
             $salida = $row['cod'];
         }
         return $salida;
+    }
+    public function getProduct($cod){
+        $parametros = [$cod];
+        $sentencia = "SELECT cod, nombre_corto, descripcion, PVP, familia FROM producto WHERE cod = ?";
+        $producto = $this->generar_consulta($sentencia, $parametros);
+        while($row = $producto->fetch()){
+            $salida[] = $row['cod'];
+            $salida[] = $row['nombre_corto'];
+            $salida[] = $row['descripcion'];
+            $salida[] = $row['PVP'];
+            $salida[] = $row['familia'];
+        }
+        return $salida;
+    }
+    public function getnombre_familia($familia){
+        $parametros = [$familia];
+        $sentencia = "SELECT nombre FROM familia WHERE cod = ?";
+        $productos = $this->generar_consulta($sentencia, $parametros);
+        while($row = $productos->fetch()){
+            $salida = $row['nombre'];
+        }
+        return $salida;
+    }
+    public function actualizar_producto($values){
+        $parametros = $values;
+        $sentencia = "UPDATE producto SET nombre_corto = ?, descripcion = ?, PVP = ?, familia = ? WHERE cod = ?";
+        $productos = $this->generar_consulta($sentencia, $parametros);
     }
 }
